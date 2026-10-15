@@ -58,3 +58,15 @@ python3 -m unittest discover -s tests -v
 ## windows installer
 
 version tags create a windows installer in the github release. it installs `bulb.exe` and the examples, and can add bulb to your user `PATH`. python is not needed after installation. bulb emits c; compiling that c into a native program still requires a windows c compiler such as gcc.
+
+## arch linux
+
+until bulb is available in the AUR, you can build the package from the github source:
+
+```sh
+git clone https://github.com/runewasneverhere/bulb-lang.git
+cd bulb-lang/packaging/arch
+makepkg -si
+```
+
+this needs `base-devel` and python. `makepkg -si` may ask for administrator approval to install missing dependencies. gcc is optional and is only needed to compile generated c.
