@@ -1,7 +1,7 @@
 # bulb
 
 <p align="center">
-    <img src="bulbicon.png" width="180" alt="bulb logo">
+    <img src="bulbthumbnail.png" width="450" alt="bulb programming language logo">
 </p>
 
 bulb is a small experimental programming language. its compiler is written in python and emits c; gcc can compile that c into a native program.
