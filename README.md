@@ -86,3 +86,7 @@ use `--size N` to change the workload size. compilation is not timed; process st
 ```sh
 python3 -m unittest discover -s tests -v
 ```
+
+## windows installer
+
+version tags create a Windows installer in the GitHub release. the installer adds `bulb.exe` and the examples, and can add Bulb to your user `PATH`. Python is not needed after installation. Bulb currently emits C; compiling that C to a native program still requires a Windows C compiler such as GCC.

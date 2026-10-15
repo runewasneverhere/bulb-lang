@@ -1,0 +1,62 @@
+name: windows installer
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: check compiler
+        shell: pwsh
+        run: |
+          python -m py_compile bulb.py
+          New-Item -ItemType Directory -Force dist | Out-Null
+          python bulb.py examples/answer.bulb -o dist/answer.c
+          if (-not (Test-Path dist/answer.c)) { throw "Bulb did not emit C output" }
+
+      - name: build standalone executable
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pyinstaller
+          python -m PyInstaller --clean --noconfirm --onefile --name bulb bulb.py
+          & .\dist\bulb.exe --help
+
+      - name: install Inno Setup
+        run: choco install innosetup --yes --no-progress
+
+      - name: build installer
+        shell: pwsh
+        run: |
+          $version = "${{ github.ref_name }}"
+          if ("${{ github.ref_type }}" -ne "tag") { $version = "0.1.0.${{ github.run_number }}" }
+          $version = $version.TrimStart("v")
+          New-Item -ItemType Directory -Force dist/installer | Out-Null
+          $compiler = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          & $compiler "/DAppVersion=$version" packaging/windows/bulb.iss
+          if ($LASTEXITCODE -ne 0) { throw "Inno Setup failed" }
+
+      - name: upload installer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: bulb-windows-installer
+          path: dist/installer/bulb-setup.exe
+          if-no-files-found: error
+
+      - name: publish release asset
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: pwsh
+        run: gh release create "${{ github.ref_name }}" dist/installer/bulb-setup.exe --title "${{ github.ref_name }}" --generate-notes
