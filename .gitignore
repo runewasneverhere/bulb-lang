@@ -1,0 +1,8 @@
+__pycache__/
+*.py[cod]
+*.o
+*.obj
+*.exe
+/build/
+/dist/
+/examples/*.c

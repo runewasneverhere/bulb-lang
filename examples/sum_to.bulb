@@ -1,0 +1,10 @@
+fn main() -> i64:
+    return sum_to(10)
+
+fn sum_to(limit: i64) -> i64:
+    var total = 0
+    var index = 0
+    while index < limit:
+        set total = total + index
+        set index = index + 1
+    return total
