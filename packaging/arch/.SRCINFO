@@ -1,13 +1,13 @@
 pkgbase = bulb-lang
 	pkgdesc = small experimental programming language compiled through C
-	pkgver = 0.1.0
+	pkgver = 0.2.0
 	pkgrel = 1
 	url = https://github.com/runewasneverhere/bulb-lang
 	arch = any
 	license = GPL-3.0-or-later
 	depends = python
 	optdepends = gcc: compile generated C into native executables
-	source = bulb-lang-0.1.0.tar.gz::https://github.com/runewasneverhere/bulb-lang/archive/refs/tags/v0.1.0.tar.gz
-	sha256sums = 720661b066400e2ee80278452b562f1e5b10d10de5688680f7ebd1899a0c5aa4
+	source = bulb-lang-0.2.0.tar.gz::https://github.com/runewasneverhere/bulb-lang/archive/refs/tags/v0.2.0.tar.gz
+	sha256sums = eeac4b07d4dde4ad2c6f5257a48770b6913b711147ab2615e596a7711b403606
 
 pkgname = bulb-lang
