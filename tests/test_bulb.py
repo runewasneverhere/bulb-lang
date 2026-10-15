@@ -84,6 +84,106 @@ fn main() -> i64:
 """
         self.assertEqual(self.compile_and_run(source), 42)
 
+    def test_mutable_array_elements(self):
+        source = """fn main() -> i64:
+    var values = [1, 2]
+    set values[0] = 40
+    set values[1] = 2
+    return values[0] + values[1]
+"""
+        self.assertEqual(self.compile_and_run(source), 42)
+
+    def test_owned_heap_array_and_early_return_cleanup(self):
+        source = """fn main() -> i64:
+    var values = heap_array(3, 0)
+    set values[0] = 10
+    set values[1] = 20
+    set values[2] = 9
+    if values.length == 3:
+        return values[0] + values[1] + values[2] + values.length
+    else:
+        return -1
+"""
+        generated_c = compile_source(source)
+        self.assertEqual(generated_c.count("bulb_heap_i64_destroy(bulb_values.data);"), 2)
+        self.assertEqual(self.compile_and_run(source), 42)
+
+    def test_heap_array_return_inside_loop_reads_before_cleanup(self):
+        source = """fn main() -> i64:
+    var values = heap_array(1, 42)
+    while true:
+        return values[0]
+    return 0
+"""
+        self.assertEqual(self.compile_and_run(source), 42)
+
+    def test_empty_heap_array_has_zero_length(self):
+        source = "fn main() -> i64:\n    let values = heap_array(0, 0)\n    return values.length\n"
+        self.assertEqual(self.compile_and_run(source), 0)
+
+    def test_unsafe_pointer_allocation_and_function_calls(self):
+        source = """fn read_first(pointer: ptr_i64) -> i64:
+    return unsafe_load_i64(pointer, 0)
+
+fn main() -> i64:
+    var pointer = unsafe_alloc_i64(1)
+    unsafe_store_i64(pointer, 0, 42)
+    let value = read_first(pointer)
+    unsafe_free_i64(pointer)
+    return value
+"""
+        self.assertEqual(self.compile_and_run(source), 42)
+
+    def test_rejects_copying_owned_heap_array(self):
+        source = """fn main() -> i64:
+    var values = heap_array(2, 0)
+    let copy = values
+    return copy.length
+"""
+        with self.assertRaisesRegex(CompileError, "heap arrays cannot be copied"):
+            compile_source(source)
+
+    def test_mutable_struct_fields(self):
+        source = """struct Pair:
+    left: i64
+    right: i64
+
+fn main() -> i64:
+    var pair = Pair(0, 0)
+    set pair.left = 42
+    return pair.left
+"""
+        self.assertEqual(self.compile_and_run(source), 42)
+
+    def test_return_inside_loop(self):
+        source = """fn main() -> i64:
+    var index = 0
+    while index < 5:
+        if index == 3:
+            return index
+        set index = index + 1
+    return -1
+"""
+        self.assertEqual(self.compile_and_run(source), 3)
+
+    def test_nested_locals_have_block_scope(self):
+        source = """fn main() -> i64:
+    let value = 1
+    if true:
+        let value = 42
+    return value
+"""
+        self.assertEqual(self.compile_and_run(source), 1)
+
+    def test_rejects_mutating_immutable_array(self):
+        source = """fn main() -> i64:
+    let values = [1, 2]
+    set values[0] = 3
+    return 0
+"""
+        with self.assertRaisesRegex(CompileError, "cannot assign to immutable variable 'values'"):
+            compile_source(source)
+
     def test_array_index_is_bounds_checked(self):
         source = """fn main() -> i64:
     let values = [10, 20]

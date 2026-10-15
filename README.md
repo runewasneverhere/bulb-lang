@@ -37,9 +37,19 @@ the program exits with status `42`.
 - functions with `i64` or `bool` parameters and return values
 - inferred local types, immutable `let` values, and mutable scalar `var` values updated with `set`
 - arithmetic, comparisons, boolean operators, function calls, `if`/`else`, and `while`
-- fixed-size arrays and structs stored inline; array access checks bounds
+- fixed-size arrays and structs stored inline; `var` allows changing array elements and struct fields, and array access checks bounds
+- owned, runtime-sized `i64` heap arrays created with `heap_array(length, initial_value)`; `.length` returns their size
 
-`i64` arithmetic wraps to 64 bits. division truncates toward zero, division by zero aborts, and `INT64_MIN / -1` returns `INT64_MIN`. locals must be declared at function scope. there are no pointers, heap allocation, mutable arrays or structs, or returns from inside loops yet.
+locals can be declared inside nested blocks and are limited to that block. `return` works inside loops and conditionals. owned heap arrays are freed automatically when their function returns; they cannot be copied, returned, passed to other functions, or declared inside nested blocks yet. raw `ptr_i64` pointers are available through `unsafe_alloc_i64`, `unsafe_load_i64`, `unsafe_store_i64`, and `unsafe_free_i64`. raw allocations are uninitialized and use manual memory management; callers must initialize before reading, track bounds, free exactly once, and never use a pointer after freeing it. `i64` arithmetic wraps to 64 bits. division truncates toward zero, division by zero aborts, and `INT64_MIN / -1` returns `INT64_MIN`.
+
+```text
+fn main() -> i64:
+    var pointer = unsafe_alloc_i64(1)
+    unsafe_store_i64(pointer, 0, 42)
+    let value = unsafe_load_i64(pointer, 0)
+    unsafe_free_i64(pointer)
+    return value
+```
 
 ## compare speed
 
