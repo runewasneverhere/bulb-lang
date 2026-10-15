@@ -15,6 +15,8 @@ PrivilegesRequired=lowest
 ArchitecturesAllowed=x64
 ArchitecturesInstallIn64BitMode=x64
 LicenseFile=..\..\LICENSE
+SetupIconFile=..\..\bulbicon.ico
+WizardSmallImageFile=..\..\bulbicon.png
 OutputDir=..\..\dist\installer
 OutputBaseFilename=bulb-setup
 Compression=lzma2/ultra64
@@ -33,8 +35,8 @@ Source: "..\..\COPYRIGHT"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\examples\*.bulb"; DestDir: "{app}\examples"; Flags: ignoreversion
 
 [Icons]
-Name: "{group}\Bulb README"; Filename: "{app}\README.md"
-Name: "{group}\Bulb examples"; Filename: "{app}\examples"
+Name: "{group}\Bulb README"; Filename: "{app}\README.md"; IconFilename: "{app}\bulb.exe"
+Name: "{group}\Bulb examples"; Filename: "{app}\examples"; IconFilename: "{app}\bulb.exe"
 
 [Code]
 function HasPathEntry(PathValue, Directory: string): Boolean;
