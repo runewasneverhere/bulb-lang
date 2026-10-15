@@ -12,6 +12,7 @@ DefaultDirName={localappdata}\Programs\Bulb
 DefaultGroupName=Bulb
 DisableProgramGroupPage=yes
 PrivilegesRequired=lowest
+ChangesEnvironment=yes
 ArchitecturesAllowed=x64
 ArchitecturesInstallIn64BitMode=x64
 LicenseFile=..\..\LICENSE

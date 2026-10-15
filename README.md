@@ -61,7 +61,7 @@ python3 -m unittest discover -s tests -v
 
 ## windows installer
 
-version tags create a windows installer in the github release. it uses [`bulbicon.png`](bulbicon.png) in the setup wizard and embeds [`bulbicon.ico`](bulbicon.ico) in the installer and `bulb.exe`. it installs `bulb.exe` and the examples, and can add bulb to your user `PATH`. python is not needed after installation. bulb emits c; compiling that c into a native program still requires a windows c compiler such as gcc.
+version tags create a windows installer in the github release. it uses [`bulbicon.png`](bulbicon.png) in the setup wizard and embeds [`bulbicon.ico`](bulbicon.ico) in the installer and `bulb.exe`. it installs `bulb.exe` and the examples, and can add bulb to your user `PATH`. keep the "add bulb to your user path" option selected, then close and reopen PowerShell so it picks up the updated path. python is not needed after installation. bulb emits c; compiling that c into a native program still requires a windows c compiler such as gcc.
 
 ## arch linux
 
